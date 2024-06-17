@@ -19,8 +19,6 @@ class Vertex {
   //   );
   //   return (this.moves = validMoves);
   // }
-
-  isValid(move) {}
 }
 
 function createGraph() {
@@ -72,23 +70,29 @@ const knightMoves = (start, end) => {
   }
   let queue = [graph[startX][startY]];
   let visited = new Set();
-  visited.add(`${startX},${startY}`);
+  visited.add([startX, startY]);
 
   while (queue.length > 0) {
     let pointer = queue.shift();
 
     for (let move of pointer.moves) {
       let [x, y] = move.coords;
+      queue.push(graph[x][y]);
+
+      if (!visited.has(`${x},${y}`)) {
+        visited.add([x, y]);
+      }
+
+      if (graph[x][y] === graph[endX][endY]) {
+        return visited;
+      }
+      console.log(visited);
     }
 
-    if (!visited.has(key)) {
-      visited.add(key);
-    }
-    console.log(queue);
-    queue.push(pointer.moves);
+    // queue.push(pointer.moves);
   }
 };
-// console.log(knightMoves([0, 0], [1, 2]));
+console.log(knightMoves([0, 0], [2, 1]));
 
 // console.log(graph);
 // console.log(graph[0][0].moves);
