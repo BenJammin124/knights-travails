@@ -69,8 +69,29 @@ const knightMoves = (start, end) => {
     return graph[endX][endY].coords;
   }
   let queue = [graph[startX][startY]];
+
   let visited = new Set();
-  visited.add([startX, startY]);
+  const predecessors = [];
+  predecessors[[startX, startY]] = null;
+  visited.add(`${startX}, ${startY}`);
+
+  const buildPath = (goal, root, predecessors) => {
+    const stack = [];
+    stack.push(goal);
+
+    let u = predecessors[goal];
+
+    while (u != root) {
+      stack.push(u);
+      u = predecessors[u];
+    }
+
+    stack.push(root);
+
+    let path = stack.reverse();
+    console.log(path);
+    return path;
+  };
 
   while (queue.length > 0) {
     let pointer = queue.shift();
@@ -79,23 +100,24 @@ const knightMoves = (start, end) => {
       let [x, y] = move.coords;
       queue.push(graph[x][y]);
 
-      if (!visited.has(`${x},${y}`)) {
-        visited.add([x, y]);
+      if (!visited.has(`${x}, ${y}`)) {
+        visited.add(`${x}, ${y}`);
+        predecessors[[x, y]] = pointer.coords;
       }
 
       if (graph[x][y] === graph[endX][endY]) {
-        return visited;
+        const path = buildPath(
+          graph[endX][endY].coords,
+          graph[startX][startY].coords,
+          predecessors
+        );
+        const formattedPath = path.map((vertex) => `[${vertex}]`).join("\n");
+        return `You made it in ${
+          path.length - 1
+        } moves! Here's your path:\n${formattedPath}`;
       }
       console.log(visited);
     }
-
-    // queue.push(pointer.moves);
   }
 };
-console.log(knightMoves([0, 0], [2, 1]));
-
-// console.log(graph);
-// console.log(graph[0][0].moves);
-
-// console.log(graph.possibleMoves);
-// console.log(graph[0][3].coords);
+console.log(knightMoves([1, 2], [2, 1]));
